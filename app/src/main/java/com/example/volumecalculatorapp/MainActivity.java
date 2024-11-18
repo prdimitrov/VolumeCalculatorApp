@@ -1,5 +1,6 @@
 package com.example.volumecalculatorapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.GridView;
 
@@ -49,6 +50,14 @@ public class MainActivity extends AppCompatActivity {
             gridView.setAdapter(customAdapter);
             //This setNumColumns can be done thru the .xml also!
             gridView.setNumColumns(2);
+
+            gridView.setOnItemClickListener((parent, view, position, id) -> {
+                //We navigate with Intent
+//                Intent i = new Intent(this, Sphere.class);
+                Intent i = new Intent(getApplicationContext(), SphereActivity.class);
+                startActivity(i);
+
+            });
             return insets;
         });
     }

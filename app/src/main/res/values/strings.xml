@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">VolumeCalculatorApp</string>
+    <string name="sphere_volume">Sphere Volume</string>
+    <string name="result">Result</string>
+    <string name="calculate_volume">Calculate Volume</string>
 </resources>
