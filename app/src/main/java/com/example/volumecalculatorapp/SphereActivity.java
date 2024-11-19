@@ -32,13 +32,15 @@ public class SphereActivity extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
 
-            radius = findViewById(R.id.enterRadiusEditText);
-            title = findViewById(R.id.titleTextView);
-            result = findViewById(R.id.resultTextView);
-            calculateBtn = findViewById(R.id.calculateButton);
-            backBtn = findViewById(R.id.backButton);
-            unitBtn = findViewById(R.id.unitButton);
-            clearBtn = findViewById(R.id.clearButton);
+            radius = findViewById(R.id.sphereEnterRadiusEditText);
+            title = findViewById(R.id.sphereTitleTextView);
+            result = findViewById(R.id.sphereResultTextView);
+            calculateBtn = findViewById(R.id.sphereCalculateButton);
+            backBtn = findViewById(R.id.sphereBackButton);
+            unitBtn = findViewById(R.id.sphereUnitButton);
+            clearBtn = findViewById(R.id.sphereClearButton);
+
+            title.setText(getString(R.string.sphere_volume_title));
 
             calculateBtn.setOnClickListener(v1 -> {
                 try {

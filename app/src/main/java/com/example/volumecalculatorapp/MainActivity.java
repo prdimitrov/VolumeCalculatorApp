@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
             gridView.setOnItemClickListener((parent, view, position, id) -> {
                 //We navigate with Intent
 //                Intent intent = new Intent(this, Sphere.class);
-                Intent intent;
+                Intent intent = null;
                 switch (position) {
                     case 0:
                         intent = new Intent(getApplicationContext(), SphereActivity.class);
