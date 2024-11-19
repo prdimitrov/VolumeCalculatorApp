@@ -3,6 +3,7 @@ package com.example.volumecalculatorapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Shape> shapesList;
     // 3 - Adapter - MyCustomAdapter
     CustomAdapter customAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,10 +55,28 @@ public class MainActivity extends AppCompatActivity {
 
             gridView.setOnItemClickListener((parent, view, position, id) -> {
                 //We navigate with Intent
-//                Intent i = new Intent(this, Sphere.class);
-                Intent i = new Intent(getApplicationContext(), SphereActivity.class);
-                startActivity(i);
-
+//                Intent intent = new Intent(this, Sphere.class);
+                Intent intent = null;
+                switch (position) {
+                    case 0:
+                        intent = new Intent(getApplicationContext(), SphereActivity.class);
+                        break;
+                    case 1:
+                        intent = new Intent(getApplicationContext(), CylinderActivity.class);
+                        break;
+                    case 2:
+                        intent = new Intent(getApplicationContext(), CubeActivity.class);
+                        break;
+                    case 3:
+                        intent = new Intent(getApplicationContext(), PrismActivity.class);
+                        break;
+                    default:
+                        Toast.makeText(this, "Choose something", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                if (intent != null) {
+                    startActivity(intent);
+                }
             });
             return insets;
         });

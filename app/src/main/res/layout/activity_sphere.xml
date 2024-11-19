@@ -9,12 +9,11 @@
     tools:context=".SphereActivity">
 
     <TextView
-        android:id="@+id/titleTextView"
+        android:id="@+id/sphereTitleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="39dp"
         android:gravity="center"
-        android:text="@string/sphere_volume"
         android:textColor="#ffffff"
         android:textSize="32sp"
         android:textStyle="bold"
@@ -23,7 +22,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/enterRadiusEditText"
+        android:id="@+id/sphereEnterRadiusEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="164dp"
@@ -36,7 +35,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/resultTextView"
+        android:id="@+id/sphereResultTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
@@ -47,20 +46,20 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/enterRadiusEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/sphereEnterRadiusEditText" />
 
     <Button
-        android:id="@+id/calculateButton"
+        android:id="@+id/sphereCalculateButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/calculate_volume"
-        app:layout_constraintBottom_toTopOf="@+id/resultTextView"
+        app:layout_constraintBottom_toTopOf="@+id/sphereResultTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/enterRadiusEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/sphereEnterRadiusEditText" />
 
     <Button
-        android:id="@+id/backButton"
+        android:id="@+id/sphereBackButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="36dp"
@@ -70,17 +69,17 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/clearButton"
+        android:id="@+id/sphereClearButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="39dp"
         android:text="@string/clear"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/unitButton"
-        app:layout_constraintStart_toEndOf="@+id/backButton" />
+        app:layout_constraintEnd_toStartOf="@+id/sphereUnitButton"
+        app:layout_constraintStart_toEndOf="@+id/sphereBackButton" />
 
     <Button
-        android:id="@+id/unitButton"
+        android:id="@+id/sphereUnitButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="36dp"

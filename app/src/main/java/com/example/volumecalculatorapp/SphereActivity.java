@@ -1,5 +1,6 @@
 package com.example.volumecalculatorapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -20,36 +21,36 @@ public class SphereActivity extends AppCompatActivity {
     Button calculateBtn, backBtn, unitBtn, clearBtn;
 
     boolean inLiters = false;
-    double tempVolume = 0.0;
-    //TODO: TEST DIFFERENT CASES, THERE ARE BUGS TO BE FIXED!!!
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_sphere);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            radius = findViewById(R.id.enterRadiusEditText);
-            title = findViewById(R.id.titleTextView);
-            result = findViewById(R.id.resultTextView);
-            calculateBtn = findViewById(R.id.calculateButton);
-            backBtn = findViewById(R.id.backButton);
-            unitBtn = findViewById(R.id.unitButton);
-            clearBtn = findViewById(R.id.clearButton);
+
+            radius = findViewById(R.id.sphereEnterRadiusEditText);
+            title = findViewById(R.id.sphereTitleTextView);
+            result = findViewById(R.id.sphereResultTextView);
+            calculateBtn = findViewById(R.id.sphereCalculateButton);
+            backBtn = findViewById(R.id.sphereBackButton);
+            unitBtn = findViewById(R.id.sphereUnitButton);
+            clearBtn = findViewById(R.id.sphereClearButton);
+
+            title.setText(getString(R.string.sphere_volume_title));
 
             calculateBtn.setOnClickListener(v1 -> {
                 try {
                     double r = Double.parseDouble(radius.getText().toString());
-                    double volume = ((double) 4 / 3) * Math.PI * r * r * r;
-                    //TODO: TEST DIFFERENT CASES, THERE ARE BUGS TO BE FIXED!!!
-                    tempVolume = volume;
+                    double volume = (4.0 / 3.0) * Math.PI * Math.pow(r, 3);
                     result.setText("V=" + volume + "m³");
+                    inLiters = false;
                 } catch (NumberFormatException e) {
-                    Toast.makeText(this, "Please enter a valid number", Toast.LENGTH_SHORT).show();
+                    enterValidNumberToast(SphereActivity.this);
                 }
-                //Formula: V = (4/3) * pi * r^3
             });
 
             backBtn.setOnClickListener(v2 -> {
@@ -57,28 +58,37 @@ public class SphereActivity extends AppCompatActivity {
                 startActivity(i);
             });
 
-            unitBtn.setOnClickListener(v3 -> {
-
-            });
-
             clearBtn.setOnClickListener(v4 -> {
                 radius.setText("");
                 result.setText(R.string.result);
+                inLiters = false;
             });
 
             unitBtn.setOnClickListener(v5 -> {
-                //TODO: TEST DIFFERENT CASES, THERE ARE BUGS TO BE FIXED!!!
-                    if (!inLiters) {
-                        tempVolume = tempVolume * 1000.0;
-                        result.setText("V=" + tempVolume + "L");
-                        inLiters = true;
-                    } else if (inLiters) {
-                        tempVolume = tempVolume / 1000.0;  // 1000 L = 1 m³
-                        result.setText("V=" + tempVolume + "m³");
-                        inLiters = false;
+                try {
+                    if (!radius.getText().toString().isEmpty()) {
+                        double r = Double.parseDouble(radius.getText().toString());
+                        double volume = (4.0 / 3.0) * Math.PI * Math.pow(r, 3);
+
+                        if (!inLiters) {
+                            double volumeInLiters = volume * 1000.0;
+                            result.setText("V=" + volumeInLiters + "L");
+                            inLiters = true;
+                        } else {
+                            result.setText("V=" + volume + "m³");
+                            inLiters = false;
+                        }
+                    } else {
+                        enterValidNumberToast(SphereActivity.this);
                     }
+                } catch (NumberFormatException e) {
+                    enterValidNumberToast(SphereActivity.this);
+                }
             });
             return insets;
         });
+    }
+    private static void enterValidNumberToast(Context context) {
+        Toast.makeText(context, "Please enter a valid number", Toast.LENGTH_SHORT).show();
     }
 }
