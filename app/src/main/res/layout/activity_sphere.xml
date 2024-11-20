@@ -22,14 +22,15 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
+        android:inputType="numberDecimal"
         android:id="@+id/sphereEnterRadiusEditText"
-        android:layout_width="0dp"
+        android:layout_width="401dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="164dp"
-        android:hint="Please enter the radius"
-        android:textSize="20dp"
-        android:textColorHint="#ffffff"
+        android:hint="@string/enter_radius"
         android:textColor="#ffffff"
+        android:textColorHint="#ffffff"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -49,21 +50,11 @@
         app:layout_constraintTop_toBottomOf="@+id/sphereEnterRadiusEditText" />
 
     <Button
-        android:id="@+id/sphereCalculateButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/calculate_volume"
-        app:layout_constraintBottom_toTopOf="@+id/sphereResultTextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sphereEnterRadiusEditText" />
-
-    <Button
         android:id="@+id/sphereBackButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
-        android:layout_marginBottom="39dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="36dp"
         android:text="@string/back"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -72,19 +63,35 @@
         android:id="@+id/sphereClearButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="39dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="36dp"
         android:text="@string/clear"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/sphereUnitButton"
-        app:layout_constraintStart_toEndOf="@+id/sphereBackButton" />
-
-    <Button
-        android:id="@+id/sphereUnitButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="36dp"
-        android:layout_marginBottom="39dp"
-        android:text="@string/unit"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <Spinner
+        android:id="@+id/radiusUnitSpinner"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="20dp"
+        android:background="#6750A3"
+        android:minHeight="48dp"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sphereEnterRadiusEditText" />
+
+    <Spinner
+        android:id="@+id/volumeUnitSpinner"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="16dp"
+        android:background="#6750A3"
+        android:minHeight="48dp"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sphereResultTextView" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
