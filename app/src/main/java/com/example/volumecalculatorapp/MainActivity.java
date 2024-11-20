@@ -65,10 +65,10 @@ public class MainActivity extends AppCompatActivity {
                         intent = new Intent(getApplicationContext(), CylinderActivity.class);
                         break;
                     case 2:
-                        intent = new Intent(getApplicationContext(), CubeActivity.class);
+//                        intent = new Intent(getApplicationContext(), CubeActivity.class);
                         break;
                     case 3:
-                        intent = new Intent(getApplicationContext(), PrismActivity.class);
+//                        intent = new Intent(getApplicationContext(), PrismActivity.class);
                         break;
                     default:
                         Toast.makeText(this, "Choose something", Toast.LENGTH_SHORT).show();
