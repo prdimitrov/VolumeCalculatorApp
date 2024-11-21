@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,6 +30,7 @@ public class SphereActivity extends AppCompatActivity {
     Spinner radiusSpinner, volumeSpinner;
     Button clearButton, backButton;
 
+    private String lastRadiusInput = ""; // the last entered radius
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,8 +57,9 @@ public class SphereActivity extends AppCompatActivity {
             title.setText(getString(R.string.sphere_volume_title));
 
             clearButton.setOnClickListener(v1 -> {
-                result.setText("");
+                result.setText(R.string.zero);
                 radius.setText("");
+                lastRadiusInput = "";
             });
 
             backButton.setOnClickListener(v2 -> {
@@ -75,7 +76,12 @@ public class SphereActivity extends AppCompatActivity {
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    calculateVolume();
+                    String newText = s.toString().trim();
+                    // Calculate if the input value changes only
+                    if (!newText.equals(lastRadiusInput)) {
+                        lastRadiusInput = newText;
+                        calculateVolume();
+                    }
                 }
 
                 @Override
@@ -118,6 +124,9 @@ public class SphereActivity extends AppCompatActivity {
                 } else if (selectedVolumeUnit.equals(VolumeUnit.CUFT.getAbbreviation())) {
                     volume *= 35.3147; // m³ to cubic feet
                     result.setText("V = " + volume + " " + VolumeUnit.CUFT.getAbbreviation());
+                } else if (selectedVolumeUnit.equals(VolumeUnit.CUIN.getAbbreviation())) {
+                    volume *= 61023.7441; // m³ to cubic inches
+                    result.setText("V = " + volume + " " + VolumeUnit.CUIN.getAbbreviation());
                 } else if (selectedVolumeUnit.equals(VolumeUnit.CUYD.getAbbreviation())) {
                     volume *= 1.30795; // m³ to cubic yards
                     result.setText("V = " + volume + " " + VolumeUnit.CUYD.getAbbreviation());
@@ -125,7 +134,7 @@ public class SphereActivity extends AppCompatActivity {
                     result.setText("V = " + volume + " " + VolumeUnit.M3.getAbbreviation());
                 }
             } else {
-                result.setText(R.string.result); // Reset if input is empty
+                result.setText(R.string.zero); // Reset if input is empty
             }
         } catch (NumberFormatException e) {
             enterValidNumberToast(this);
