@@ -41,8 +41,9 @@
 
     <ImageView
         android:id="@+id/bassHeadsBGImageView"
-        android:layout_width="207dp"
-        android:layout_height="187dp"
+        android:layout_width="123dp"
+        android:layout_height="125dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/bassheadsbg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
