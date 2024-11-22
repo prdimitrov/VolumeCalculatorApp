@@ -80,7 +80,7 @@
         app:layout_constraintStart_toEndOf="@+id/sphereBackButton" />
 
     <Spinner
-        android:id="@+id/radiusUnitSpinner"
+        android:id="@+id/sphereRadiusUnitSpinner"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
@@ -92,7 +92,7 @@
         app:layout_constraintTop_toBottomOf="@+id/sphereEnterRadiusEditText" />
 
     <Spinner
-        android:id="@+id/volumeUnitSpinner"
+        android:id="@+id/sphereVolumeUnitSpinner"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"

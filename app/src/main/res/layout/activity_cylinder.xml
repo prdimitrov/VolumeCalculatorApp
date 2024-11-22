@@ -23,30 +23,33 @@
 
     <EditText
         android:id="@+id/cylinderEnterRadiusEditText"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="164dp"
+        android:layout_marginTop="28dp"
         android:hint="@string/enter_radius"
-        android:textSize="20dp"
-        android:textColorHint="#ffffff"
-        android:textColor="#ffffff"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/cylinderEnterHeightEditText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
-        android:hint="@string/enter_height"
+        android:inputType="numberDecimal"
         android:textColor="#ffffff"
         android:textColorHint="#ffffff"
-        android:textSize="20dp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cylinderEnterRadiusEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/cylinderEnterHeightEditText" />
+
+    <EditText
+        android:id="@+id/cylinderEnterHeightEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="132dp"
+        android:hint="@string/enter_height"
+        android:inputType="numberDecimal"
+        android:textColor="#ffffff"
+        android:textColorHint="#ffffff"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/cylinderResultTextView"
@@ -56,31 +59,18 @@
         android:layout_marginBottom="32dp"
         android:text="@string/zero"
         android:textColor="#ffffff"
-        android:textSize="28sp"
+        android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cylinderEnterRadiusEditText" />
 
     <Button
-        android:id="@+id/cylinderCalculateButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="36dp"
-        android:text="@string/calculate_volume"
-        app:layout_constraintBottom_toTopOf="@+id/cylinderResultTextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cylinderEnterHeightEditText"
-        app:layout_constraintVertical_bias="0.616" />
-
-    <Button
         android:id="@+id/cylinderBackButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
-        android:layout_marginBottom="39dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="36dp"
         android:text="@string/back"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -89,20 +79,45 @@
         android:id="@+id/cylinderClearButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="39dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="36dp"
         android:text="@string/clear"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/cylinderUnitButton"
-        app:layout_constraintStart_toEndOf="@+id/cylinderBackButton" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
-        android:id="@+id/cylinderUnitButton"
+        android:id="@+id/cylinderCopyButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="36dp"
-        android:layout_marginBottom="39dp"
-        android:text="@string/unit"
+        android:layout_marginBottom="36dp"
+        android:text="@string/copy"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/cylinderClearButton"
+        app:layout_constraintStart_toEndOf="@+id/cylinderBackButton" />
+
+    <Spinner
+        android:id="@+id/cylinderRadiusUnitSpinner"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="20dp"
+        android:background="#6750A3"
+        android:minHeight="48dp"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cylinderEnterRadiusEditText" />
+
+    <Spinner
+        android:id="@+id/cylinderVolumeUnitSpinner"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="16dp"
+        android:background="#6750A3"
+        android:minHeight="48dp"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cylinderResultTextView" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

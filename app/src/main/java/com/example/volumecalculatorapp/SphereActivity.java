@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,17 +23,18 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.volumecalculatorapp.enums.Unit;
 import com.example.volumecalculatorapp.enums.VolumeUnit;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
 
 public class SphereActivity extends AppCompatActivity {
 
     EditText radius;
     TextView title, result;
-    Spinner radiusSpinner, volumeSpinner;
+    Spinner unitSpinner, volumeUnitSpinner;
     Button clearButton, backButton, copyButton;
     ClipboardManager clipboardManager;
-
     private String lastRadiusInput = ""; // the last entered radius
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,11 +53,11 @@ public class SphereActivity extends AppCompatActivity {
             backButton = findViewById(R.id.sphereBackButton);
             copyButton = findViewById(R.id.sphereCopyButton);
 
-            radiusSpinner = findViewById(R.id.radiusUnitSpinner);
-            volumeSpinner = findViewById(R.id.volumeUnitSpinner);
+            unitSpinner = findViewById(R.id.sphereRadiusUnitSpinner);
+            volumeUnitSpinner = findViewById(R.id.sphereVolumeUnitSpinner);
 
-            radiusSpinner.setAdapter(spinnerRadiusValues(getApplicationContext()));
-            volumeSpinner.setAdapter(spinnerVolumeValues(getApplicationContext()));
+            unitSpinner.setAdapter(spinnerRadiusValues(getApplicationContext()));
+            volumeUnitSpinner.setAdapter(spinnerVolumeValues(getApplicationContext()));
 
             title.setText(getString(R.string.sphere_volume_title));
 
@@ -67,6 +67,7 @@ public class SphereActivity extends AppCompatActivity {
                 result.setText(R.string.zero);
                 radius.setText("");
                 lastRadiusInput = "";
+                Toast.makeText(getApplicationContext(), "Fields cleared!", Toast.LENGTH_SHORT).show();
             });
 
             copyButton.setOnClickListener(v3 -> {
@@ -99,7 +100,7 @@ public class SphereActivity extends AppCompatActivity {
                     // Calculate if the input value changes only
                     if (!newText.equals(lastRadiusInput)) {
                         lastRadiusInput = newText;
-                        calculateVolume();
+                        calculateSphereVolume();
                     }
                 }
 
@@ -109,21 +110,21 @@ public class SphereActivity extends AppCompatActivity {
                 }
             });
 
-            radiusSpinner.setOnItemSelectedListener(new SimpleSpinnerListener(this::calculateVolume));
-            volumeSpinner.setOnItemSelectedListener(new SimpleSpinnerListener(this::calculateVolume));
+            unitSpinner.setOnItemSelectedListener(new SimpleSpinnerListener(this::calculateSphereVolume));
+            volumeUnitSpinner.setOnItemSelectedListener(new SimpleSpinnerListener(this::calculateSphereVolume));
 
             return insets;
         });
     }
 
-    private void calculateVolume() {
+    private void calculateSphereVolume() {
         try {
-            String input = radius.getText().toString();
-            if (!input.isEmpty()) {
-                double volume = calculateVolume(input);
+            String radiusInput = radius.getText().toString();
+            if (!radiusInput.isEmpty()) {
+                double volume = calculateSphereVolume(radiusInput);
 
-                String selectedRadiusUnit = (String) radiusSpinner.getSelectedItem();
-                String selectedVolumeUnit = (String) volumeSpinner.getSelectedItem();
+                String selectedRadiusUnit = (String) unitSpinner.getSelectedItem();
+                String selectedVolumeUnit = (String) volumeUnitSpinner.getSelectedItem();
 
                 if (selectedRadiusUnit.equals(Unit.MM.getAbbreviation())) {
                     volume /= 1_000_000_000; // mm³ to m³
@@ -133,23 +134,25 @@ public class SphereActivity extends AppCompatActivity {
                     volume *= 1_000_000_000; // km³ to m³
                 }
 
+                DecimalFormat df = new DecimalFormat("#,##0.00");
+
                 if (selectedVolumeUnit.equals(VolumeUnit.CM3.getAbbreviation())) {
                     volume *= 1_000_000; // m³ to cm³
-                    result.setText("V = " + volume + " " + VolumeUnit.CM3.getAbbreviation());
+                    result.setText("V = " + df.format(volume) + " " + VolumeUnit.CM3.getAbbreviation());
                 } else if (selectedVolumeUnit.equals(VolumeUnit.MM3.getAbbreviation())) {
                     volume *= 1_000_000_000; // m³ to mm³
-                    result.setText("V = " + volume + " " + VolumeUnit.MM3.getAbbreviation());
+                    result.setText("V = " + df.format(volume) + " " + VolumeUnit.MM3.getAbbreviation());
                 } else if (selectedVolumeUnit.equals(VolumeUnit.CUFT.getAbbreviation())) {
                     volume *= 35.3147; // m³ to cubic feet
-                    result.setText("V = " + volume + " " + VolumeUnit.CUFT.getAbbreviation());
+                    result.setText("V = " + df.format(volume) + " " + VolumeUnit.CUFT.getAbbreviation());
                 } else if (selectedVolumeUnit.equals(VolumeUnit.CUIN.getAbbreviation())) {
                     volume *= 61023.7441; // m³ to cubic inches
-                    result.setText("V = " + volume + " " + VolumeUnit.CUIN.getAbbreviation());
+                    result.setText("V = " + df.format(volume) + " " + VolumeUnit.CUIN.getAbbreviation());
                 } else if (selectedVolumeUnit.equals(VolumeUnit.CUYD.getAbbreviation())) {
                     volume *= 1.30795; // m³ to cubic yards
-                    result.setText("V = " + volume + " " + VolumeUnit.CUYD.getAbbreviation());
+                    result.setText("V = " + df.format(volume) + " " + VolumeUnit.CUYD.getAbbreviation());
                 } else {
-                    result.setText("V = " + volume + " " + VolumeUnit.M3.getAbbreviation());
+                    result.setText("V = " + df.format(volume) + " " + VolumeUnit.M3.getAbbreviation());
                 }
             } else {
                 result.setText(R.string.zero); // Reset if input is empty
@@ -159,8 +162,9 @@ public class SphereActivity extends AppCompatActivity {
         }
     }
 
-    private static double calculateVolume(String input) {
-        double r = Double.parseDouble(input);
+    private static double calculateSphereVolume(String radiusInput) {
+        // Formula - V = (4/3) x π x r^3
+        double r = Double.parseDouble(radiusInput);
         double volume = (4.0 / 3.0) * Math.PI * Math.pow(r, 3);
         return volume;
     }
