@@ -1,5 +1,7 @@
 package com.example.volumecalculatorapp;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,8 +31,10 @@ public class SphereActivity extends AppCompatActivity {
     EditText radius;
     TextView title, result;
     Spinner radiusSpinner, volumeSpinner;
-    Button clearButton, backButton;
+    Button clearButton, backButton, copyButton;
+    ClipboardManager clipboardManager;
 
+    private String lastRadiusInput = ""; // the last entered radius
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +51,7 @@ public class SphereActivity extends AppCompatActivity {
 
             clearButton = findViewById(R.id.sphereClearButton);
             backButton = findViewById(R.id.sphereBackButton);
+            copyButton = findViewById(R.id.sphereCopyButton);
 
             radiusSpinner = findViewById(R.id.radiusUnitSpinner);
             volumeSpinner = findViewById(R.id.volumeUnitSpinner);
@@ -56,10 +61,25 @@ public class SphereActivity extends AppCompatActivity {
 
             title.setText(getString(R.string.sphere_volume_title));
 
+            clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+
             clearButton.setOnClickListener(v1 -> {
-                result.setText("");
+                result.setText(R.string.zero);
                 radius.setText("");
+                lastRadiusInput = "";
             });
+
+            copyButton.setOnClickListener(v3 -> {
+                String textToCopy = result.getText().toString();  // Get the text from the result TextView
+                if (!textToCopy.isEmpty()) {
+                    ClipData clip = ClipData.newPlainText("Sphere Volume Result", textToCopy);
+                    clipboardManager.setPrimaryClip(clip);
+                    Toast.makeText(getApplicationContext(), "Copied to clipboard!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Nothing to copy", Toast.LENGTH_SHORT).show();
+                }
+            });
+
 
             backButton.setOnClickListener(v2 -> {
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
@@ -75,7 +95,12 @@ public class SphereActivity extends AppCompatActivity {
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    calculateVolume();
+                    String newText = s.toString().trim();
+                    // Calculate if the input value changes only
+                    if (!newText.equals(lastRadiusInput)) {
+                        lastRadiusInput = newText;
+                        calculateVolume();
+                    }
                 }
 
                 @Override
@@ -95,8 +120,7 @@ public class SphereActivity extends AppCompatActivity {
         try {
             String input = radius.getText().toString();
             if (!input.isEmpty()) {
-                double r = Double.parseDouble(input);
-                double volume = (4.0 / 3.0) * Math.PI * Math.pow(r, 3);
+                double volume = calculateVolume(input);
 
                 String selectedRadiusUnit = (String) radiusSpinner.getSelectedItem();
                 String selectedVolumeUnit = (String) volumeSpinner.getSelectedItem();
@@ -118,6 +142,9 @@ public class SphereActivity extends AppCompatActivity {
                 } else if (selectedVolumeUnit.equals(VolumeUnit.CUFT.getAbbreviation())) {
                     volume *= 35.3147; // m³ to cubic feet
                     result.setText("V = " + volume + " " + VolumeUnit.CUFT.getAbbreviation());
+                } else if (selectedVolumeUnit.equals(VolumeUnit.CUIN.getAbbreviation())) {
+                    volume *= 61023.7441; // m³ to cubic inches
+                    result.setText("V = " + volume + " " + VolumeUnit.CUIN.getAbbreviation());
                 } else if (selectedVolumeUnit.equals(VolumeUnit.CUYD.getAbbreviation())) {
                     volume *= 1.30795; // m³ to cubic yards
                     result.setText("V = " + volume + " " + VolumeUnit.CUYD.getAbbreviation());
@@ -125,11 +152,17 @@ public class SphereActivity extends AppCompatActivity {
                     result.setText("V = " + volume + " " + VolumeUnit.M3.getAbbreviation());
                 }
             } else {
-                result.setText(R.string.result); // Reset if input is empty
+                result.setText(R.string.zero); // Reset if input is empty
             }
         } catch (NumberFormatException e) {
             enterValidNumberToast(this);
         }
+    }
+
+    private static double calculateVolume(String input) {
+        double r = Double.parseDouble(input);
+        double volume = (4.0 / 3.0) * Math.PI * Math.pow(r, 3);
+        return volume;
     }
 
     private static void enterValidNumberToast(Context context) {
