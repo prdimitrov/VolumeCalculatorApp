@@ -23,7 +23,9 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.volumecalculatorapp.enums.Unit;
 import com.example.volumecalculatorapp.enums.VolumeUnit;
 
-import java.text.DecimalFormat;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.Arrays;
 
 public class SphereActivity extends AppCompatActivity {
@@ -33,7 +35,10 @@ public class SphereActivity extends AppCompatActivity {
     Spinner unitSpinner, volumeUnitSpinner;
     Button clearButton, backButton, copyButton;
     ClipboardManager clipboardManager;
-    private String lastRadiusInput = ""; // the last entered radius
+    private String lastRadiusInput = ""; // The last entered radius
+    private boolean isSpinnerInteraction = false; // To track if the spinner interacted with
+    private int lastUnitSpinnerPosition = 0; // Store last spinner position for radius units
+    private int lastVolumeSpinnerPosition = 0; // Store last spinner position for volume units
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,11 +101,13 @@ public class SphereActivity extends AppCompatActivity {
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    String newText = s.toString().trim();
-                    // Calculate if the input value changes only
-                    if (!newText.equals(lastRadiusInput)) {
-                        lastRadiusInput = newText;
-                        calculateSphereVolume();
+                    if (!isSpinnerInteraction) {
+                        String newText = s.toString().trim();
+                        // Calculate if the input value changes only
+                        if (!newText.equals(lastRadiusInput)) {
+                            lastRadiusInput = newText;
+                            calculateVolume();
+                        }
                     }
                 }
 
@@ -110,49 +117,69 @@ public class SphereActivity extends AppCompatActivity {
                 }
             });
 
-            unitSpinner.setOnItemSelectedListener(new SimpleSpinnerListener(this::calculateSphereVolume));
-            volumeUnitSpinner.setOnItemSelectedListener(new SimpleSpinnerListener(this::calculateSphereVolume));
+            // Set initial values to avoid resetting spinners
+            unitSpinner.setSelection(lastUnitSpinnerPosition, false); // Avoid triggering recalculation
+            volumeUnitSpinner.setSelection(lastVolumeSpinnerPosition, false);
+
+            // Track spinner selection and recalculate on change
+            unitSpinner.setOnItemSelectedListener(new SimpleSpinnerListener(() -> {
+                isSpinnerInteraction = true;
+                if (unitSpinner.getSelectedItemPosition() != lastUnitSpinnerPosition) {
+                    lastUnitSpinnerPosition = unitSpinner.getSelectedItemPosition();
+                    calculateVolume();
+                }
+                isSpinnerInteraction = false;
+            }));
+
+            volumeUnitSpinner.setOnItemSelectedListener(new SimpleSpinnerListener(() -> {
+                isSpinnerInteraction = true;
+                if (volumeUnitSpinner.getSelectedItemPosition() != lastVolumeSpinnerPosition) {
+                    lastVolumeSpinnerPosition = volumeUnitSpinner.getSelectedItemPosition();
+                    calculateVolume();
+                }
+                isSpinnerInteraction = false;
+            }));
 
             return insets;
         });
     }
 
-    private void calculateSphereVolume() {
+    private void calculateVolume() {
         try {
             String radiusInput = radius.getText().toString();
             if (!radiusInput.isEmpty()) {
-                double volume = calculateSphereVolume(radiusInput);
+                BigDecimal volume = calculateSphereVolume(radiusInput);
 
                 String selectedRadiusUnit = (String) unitSpinner.getSelectedItem();
                 String selectedVolumeUnit = (String) volumeUnitSpinner.getSelectedItem();
 
+                // Convert volume to m³ based on the selected radius unit
                 if (selectedRadiusUnit.equals(Unit.MM.getAbbreviation())) {
-                    volume /= 1_000_000_000; // mm³ to m³
+                    volume = volume.divide(new BigDecimal("1000000000"), RoundingMode.HALF_UP); // mm³ to m³
                 } else if (selectedRadiusUnit.equals(Unit.CM.getAbbreviation())) {
-                    volume /= 1_000_000; // cm³ to m³
+                    volume = volume.divide(new BigDecimal("1000000"), RoundingMode.HALF_UP); // cm³ to m³
                 } else if (selectedRadiusUnit.equals(Unit.KM.getAbbreviation())) {
-                    volume *= 1_000_000_000; // km³ to m³
+                    volume = volume.multiply(new BigDecimal("1000000000")); // km³ to m³
                 }
 
-                DecimalFormat df = new DecimalFormat("#,##0.00");
-
+                // Adjust the volume based on selected output unit
                 if (selectedVolumeUnit.equals(VolumeUnit.CM3.getAbbreviation())) {
-                    volume *= 1_000_000; // m³ to cm³
-                    result.setText("V = " + df.format(volume) + " " + VolumeUnit.CM3.getAbbreviation());
+                    volume = volume.multiply(new BigDecimal("1000000")); // m³ to cm³
+                    result.setText("V = " + volume.toPlainString() + " " + VolumeUnit.CM3.getAbbreviation());
                 } else if (selectedVolumeUnit.equals(VolumeUnit.MM3.getAbbreviation())) {
-                    volume *= 1_000_000_000; // m³ to mm³
-                    result.setText("V = " + df.format(volume) + " " + VolumeUnit.MM3.getAbbreviation());
+                    volume = volume.multiply(new BigDecimal("1000000000")); // m³ to mm³
+                    result.setText("V = " + volume.toPlainString() + " " + VolumeUnit.MM3.getAbbreviation());
                 } else if (selectedVolumeUnit.equals(VolumeUnit.CUFT.getAbbreviation())) {
-                    volume *= 35.3147; // m³ to cubic feet
-                    result.setText("V = " + df.format(volume) + " " + VolumeUnit.CUFT.getAbbreviation());
+                    volume = volume.multiply(new BigDecimal("35.3147")); // m³ to cubic feet
+                    result.setText("V = " + volume.toPlainString() + " " + VolumeUnit.CUFT.getAbbreviation());
                 } else if (selectedVolumeUnit.equals(VolumeUnit.CUIN.getAbbreviation())) {
-                    volume *= 61023.7441; // m³ to cubic inches
-                    result.setText("V = " + df.format(volume) + " " + VolumeUnit.CUIN.getAbbreviation());
+                    volume = volume.multiply(new BigDecimal("61023.7441")); // m³ to cubic inches
+                    result.setText("V = " + volume.toPlainString() + " " + VolumeUnit.CUIN.getAbbreviation());
                 } else if (selectedVolumeUnit.equals(VolumeUnit.CUYD.getAbbreviation())) {
-                    volume *= 1.30795; // m³ to cubic yards
-                    result.setText("V = " + df.format(volume) + " " + VolumeUnit.CUYD.getAbbreviation());
+                    volume = volume.multiply(new BigDecimal("1.30795")); // m³ to cubic yards
+                    result.setText("V = " + volume.toPlainString() + " " + VolumeUnit.CUYD.getAbbreviation());
                 } else {
-                    result.setText("V = " + df.format(volume) + " " + VolumeUnit.M3.getAbbreviation());
+                    result.setText("V = " + volume.toPlainString() + " " + VolumeUnit.M3.getAbbreviation()); // m³
                 }
             } else {
                 result.setText(R.string.zero); // Reset if input is empty
@@ -162,11 +189,19 @@ public class SphereActivity extends AppCompatActivity {
         }
     }
 
-    private static double calculateSphereVolume(String radiusInput) {
-        // Formula - V = (4/3) x π x r^3
-        double r = Double.parseDouble(radiusInput);
-        double volume = (4.0 / 3.0) * Math.PI * Math.pow(r, 3);
-        return volume;
+    private static BigDecimal calculateSphereVolume(String radiusInput) {
+        BigDecimal r = new BigDecimal(radiusInput);
+
+        BigDecimal pi = new BigDecimal(Math.PI, MathContext.DECIMAL128);
+
+        BigDecimal fourThirds = new BigDecimal("4").divide(new BigDecimal("3"), MathContext.DECIMAL128);
+
+        BigDecimal rCubed = r.multiply(r).multiply(r);
+
+        // Formula: V = (4/3) * π * r³
+        BigDecimal volume = fourThirds.multiply(pi).multiply(rCubed);
+
+        return volume.setScale(20, RoundingMode.HALF_UP);
     }
 
     private static void enterValidNumberToast(Context context) {
