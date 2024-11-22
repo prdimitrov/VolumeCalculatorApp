@@ -8,4 +8,6 @@
     <string name="sphere_volume_title">Sphere Volume</string>
     <string name="enter_radius">Enter the radius</string>
     <string name="enter_height">Enter height</string>
+    <string name="copy">Copy</string>
+    <string name="made_by">Made by</string>
 </resources>

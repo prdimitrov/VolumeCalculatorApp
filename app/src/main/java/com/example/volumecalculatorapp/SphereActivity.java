@@ -1,10 +1,13 @@
 package com.example.volumecalculatorapp;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,7 +31,8 @@ public class SphereActivity extends AppCompatActivity {
     EditText radius;
     TextView title, result;
     Spinner radiusSpinner, volumeSpinner;
-    Button clearButton, backButton;
+    Button clearButton, backButton, copyButton;
+    ClipboardManager clipboardManager;
 
     private String lastRadiusInput = ""; // the last entered radius
     @Override
@@ -47,6 +51,7 @@ public class SphereActivity extends AppCompatActivity {
 
             clearButton = findViewById(R.id.sphereClearButton);
             backButton = findViewById(R.id.sphereBackButton);
+            copyButton = findViewById(R.id.sphereCopyButton);
 
             radiusSpinner = findViewById(R.id.radiusUnitSpinner);
             volumeSpinner = findViewById(R.id.volumeUnitSpinner);
@@ -56,11 +61,25 @@ public class SphereActivity extends AppCompatActivity {
 
             title.setText(getString(R.string.sphere_volume_title));
 
+            clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+
             clearButton.setOnClickListener(v1 -> {
                 result.setText(R.string.zero);
                 radius.setText("");
                 lastRadiusInput = "";
             });
+
+            copyButton.setOnClickListener(v3 -> {
+                String textToCopy = result.getText().toString();  // Get the text from the result TextView
+                if (!textToCopy.isEmpty()) {
+                    ClipData clip = ClipData.newPlainText("Sphere Volume Result", textToCopy);
+                    clipboardManager.setPrimaryClip(clip);
+                    Toast.makeText(getApplicationContext(), "Copied to clipboard!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Nothing to copy", Toast.LENGTH_SHORT).show();
+                }
+            });
+
 
             backButton.setOnClickListener(v2 -> {
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
@@ -101,8 +120,7 @@ public class SphereActivity extends AppCompatActivity {
         try {
             String input = radius.getText().toString();
             if (!input.isEmpty()) {
-                double r = Double.parseDouble(input);
-                double volume = (4.0 / 3.0) * Math.PI * Math.pow(r, 3);
+                double volume = calculateVolume(input);
 
                 String selectedRadiusUnit = (String) radiusSpinner.getSelectedItem();
                 String selectedVolumeUnit = (String) volumeSpinner.getSelectedItem();
@@ -139,6 +157,12 @@ public class SphereActivity extends AppCompatActivity {
         } catch (NumberFormatException e) {
             enterValidNumberToast(this);
         }
+    }
+
+    private static double calculateVolume(String input) {
+        double r = Double.parseDouble(input);
+        double volume = (4.0 / 3.0) * Math.PI * Math.pow(r, 3);
+        return volume;
     }
 
     private static void enterValidNumberToast(Context context) {

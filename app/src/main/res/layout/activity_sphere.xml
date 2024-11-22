@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
+    android:background="@drawable/back2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/back2"
     tools:context=".SphereActivity">
 
     <TextView
@@ -43,9 +43,7 @@
         android:layout_marginBottom="32dp"
         android:text="@string/zero"
         android:textColor="#ffffff"
-        android:textSize="28sp"
-        android:autoSizeMaxTextSize="28sp"
-        android:autoSizeMinTextSize="25sp"
+        android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -70,6 +68,16 @@
         android:text="@string/clear"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/sphereCopyButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="36dp"
+        android:text="@string/copy"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/sphereClearButton"
+        app:layout_constraintStart_toEndOf="@+id/sphereBackButton" />
 
     <Spinner
         android:id="@+id/radiusUnitSpinner"
