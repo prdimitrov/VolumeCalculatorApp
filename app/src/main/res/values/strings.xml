@@ -8,9 +8,13 @@
     <string name="sphere_volume_title">Sphere Volume</string>
     <string name="cylinder_volume_title">Cylinder Volume</string>
     <string name="cube_volume_title">Cube Volume</string>
+    <string name="prism_volume_title">Prism Volume</string>
     <string name="enter_radius">Enter the radius</string>
     <string name="enter_height">Enter height</string>
     <string name="copy">Copy</string>
     <string name="made_by">Made by</string>
     <string name="enter_side_length">Enter side length</string>
+    <string name="length">Length</string>
+    <string name="height">Height</string>
+    <string name="width">Width</string>
 </resources>

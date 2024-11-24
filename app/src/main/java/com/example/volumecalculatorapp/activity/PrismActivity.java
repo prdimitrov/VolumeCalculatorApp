@@ -30,55 +30,62 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
 
-public class CubeActivity extends AppCompatActivity {
-    EditText sideLength;
+public class PrismActivity extends AppCompatActivity {
+    EditText width, length, height;
     TextView title, result;
     Spinner unitLengthSpinner, volumeUnitSpinner;
     Button clearButton, backButton, copyButton;
     ClipboardManager clipboardManager;
-    private String lastSideLengthInput = ""; // The last entered length
+    private String lastLengthInput = ""; // The last entered length
+    private String lastWidthInput = ""; // The last entered width
+    private String lastHeightInput = ""; // The last entered height
     private boolean isSpinnerInteraction = false; // To track if the spinner interacted with
     private int lastUnitSpinnerPosition = 0; // Store last spinner position for chosen units
     private int lastVolumeSpinnerPosition = 0; // Store last spinner position for volume units
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_cube);
+        setContentView(R.layout.activity_prism);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
 
-            sideLength = findViewById(R.id.cubeEnterSideLengthEditText);
-            title = findViewById(R.id.cubeTitleTextView);
-            result = findViewById(R.id.cubeResultTextView);
+            width = findViewById(R.id.prismEnterWidthEditText);
+            length = findViewById(R.id.prismEnterLengthEditText);
+            height = findViewById(R.id.prismEnterHeightEditText);
+            title = findViewById(R.id.prismTitleTextView);
+            result = findViewById(R.id.prismResultTextView);
 
-            clearButton = findViewById(R.id.cubeClearButton);
-            backButton = findViewById(R.id.cubeBackButton);
-            copyButton = findViewById(R.id.cubeCopyButton);
+            clearButton = findViewById(R.id.prismClearButton);
+            backButton = findViewById(R.id.prismBackButton);
+            copyButton = findViewById(R.id.prismCopyButton);
 
-            unitLengthSpinner = findViewById(R.id.cubeLengthUnitSpinner);
-            volumeUnitSpinner = findViewById(R.id.cubeVolumeUnitSpinner);
+            unitLengthSpinner = findViewById(R.id.prismLengthUnitSpinner);
+            volumeUnitSpinner = findViewById(R.id.prismVolumeUnitSpinner);
 
             unitLengthSpinner.setAdapter(spinnerSideLengthValues(getApplicationContext()));
             volumeUnitSpinner.setAdapter(spinnerVolumeValues(getApplicationContext()));
 
-            title.setText(R.string.cube_volume_title);
+            title.setText(R.string.prism_volume_title);
 
             clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 
             clearButton.setOnClickListener(v1 -> {
                 result.setText(R.string.zero);
-                sideLength.setText("");
-                lastSideLengthInput = "";
+                width.setText("");
+                height.setText("");
+                length.setText("");
+                lastWidthInput = "";
+                lastHeightInput = "";
+                lastLengthInput = "";
                 Toast.makeText(getApplicationContext(), "Fields cleared!", Toast.LENGTH_SHORT).show();
             });
 
             copyButton.setOnClickListener(v3 -> {
                 String textToCopy = result.getText().toString();  // Get the text from the result TextView
                 if (!textToCopy.isEmpty()) {
-                    ClipData clip = ClipData.newPlainText("Cube Volume Result", textToCopy);
+                    ClipData clip = ClipData.newPlainText("Prism Volume Result", textToCopy);
                     clipboardManager.setPrimaryClip(clip);
                     Toast.makeText(getApplicationContext(), "Copied to clipboard!", Toast.LENGTH_SHORT).show();
                 } else {
@@ -92,29 +99,9 @@ public class CubeActivity extends AppCompatActivity {
             });
 
             // Add listeners for live updates
-            sideLength.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    // No-op
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if (!isSpinnerInteraction) {
-                        String newText = s.toString().trim();
-                        // Calculate if the input value changes only
-                        if (!newText.equals(lastSideLengthInput)) {
-                            lastSideLengthInput = newText;
-                            calculateVolume();
-                        }
-                    }
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    // No-op
-                }
-            });
+            updateLive(width, lastWidthInput, isSpinnerInteraction);
+            updateLive(length, lastLengthInput, isSpinnerInteraction);
+            updateLive(height, lastHeightInput, isSpinnerInteraction);
 
             unitLengthSpinner.setSelection(lastUnitSpinnerPosition, false); // Avoid triggering recalculation
             volumeUnitSpinner.setSelection(lastVolumeSpinnerPosition, false);
@@ -137,15 +124,43 @@ public class CubeActivity extends AppCompatActivity {
                 }
                 isSpinnerInteraction = false;
             }));
+
             return insets;
+        });
+    }
+
+    private void updateLive(TextView type, String inputType, boolean spinnerInteraction) {
+        type.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No-op
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!spinnerInteraction) {
+                    String newText = s.toString().trim();
+                    // Calculate if the input value changes only
+                    if (!newText.equals(inputType)) {
+                        calculateVolume();
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // No-op
+            }
         });
     }
 
     private void calculateVolume() {
         try {
-            String input = sideLength.getText().toString();
-            if (!input.isEmpty()) {
-                BigDecimal volume = calculateCubeVolume(input);
+            String widthInput = width.getText().toString();
+            String lengthInput = length.getText().toString();
+            String heightInput = height.getText().toString();
+            if (!widthInput.isEmpty() && !lengthInput.isEmpty() && !heightInput.isEmpty()) {
+                BigDecimal volume = calculateCubeVolume(widthInput, lengthInput, heightInput);
 
                 String selectedUnit = (String) unitLengthSpinner.getSelectedItem();
                 String selectedVolumeUnit = (String) volumeUnitSpinner.getSelectedItem();
@@ -189,9 +204,13 @@ public class CubeActivity extends AppCompatActivity {
         }
     }
 
-    private static BigDecimal calculateCubeVolume(String input) {
-        // Formula: V = a ^ 3
-        BigDecimal volume = new BigDecimal(input).pow(3);
+    private static BigDecimal calculateCubeVolume(String width, String length, String height) {
+        // Formula: V = w * l * h
+        BigDecimal w = new BigDecimal(width);
+        BigDecimal l = new BigDecimal(length);
+        BigDecimal h = new BigDecimal(height);
+
+        BigDecimal volume = w.multiply(l).multiply(h);
 
         return volume.setScale(20, RoundingMode.HALF_UP);
     }

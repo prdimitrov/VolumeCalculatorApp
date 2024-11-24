@@ -42,7 +42,7 @@ public class CylinderActivity extends AppCompatActivity {
     private String lastRadiusInput = ""; // The last entered radius
     private String lastHeightInput = ""; // The last entered height
     private boolean isSpinnerInteraction = false; // To track spinner interactions
-    private int lastUnitSpinnerPosition = 0; // Store last spinner position for radius units
+    private int lastUnitSpinnerPosition = 0; // Store last spinner position for chosen units
     private int lastVolumeSpinnerPosition = 0; // Store last spinner position for volume units
 
     @Override
@@ -100,49 +100,8 @@ public class CylinderActivity extends AppCompatActivity {
             });
 
             // Add listeners for live updates on both radius and height
-            radius.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    // No-op
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if (!isSpinnerInteraction) {
-                        String newText = s.toString().trim();
-                        if (!newText.equals(lastRadiusInput)) {
-                            lastRadiusInput = newText;
-                            calculateVolume();
-                        }
-                    }
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    // No-op
-                }
-            });
-
-            height.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    // No-op
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    String newText = s.toString().trim();
-                    if (!newText.equals(lastHeightInput)) {
-                        lastHeightInput = newText;
-                        calculateVolume();
-                    }
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    // No-op
-                }
-            });
+            updateLive(radius, lastRadiusInput, isSpinnerInteraction);
+            updateLive(height, lastHeightInput, isSpinnerInteraction);
 
             // Set initial values to avoid resetting spinners
             unitSpinner.setSelection(lastUnitSpinnerPosition, false); // Avoid triggering recalculation
@@ -234,6 +193,31 @@ public class CylinderActivity extends AppCompatActivity {
         BigDecimal volume = pi.multiply(rSquared).multiply(h);
 
         return volume.setScale(20, RoundingMode.HALF_UP);
+    }
+
+    private void updateLive(TextView type, String inputType, boolean spinnerInteraction) {
+        type.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No-op
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!spinnerInteraction) {
+                    String newText = s.toString().trim();
+                    // Calculate if the input value changes only
+                    if (!newText.equals(inputType)) {
+                        calculateVolume();
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // No-op
+            }
+        });
     }
 
     private static void enterValidNumberToast(Context context) {

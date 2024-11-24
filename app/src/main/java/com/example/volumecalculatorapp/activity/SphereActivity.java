@@ -40,7 +40,7 @@ public class SphereActivity extends AppCompatActivity {
     ClipboardManager clipboardManager;
     private String lastRadiusInput = ""; // The last entered radius
     private boolean isSpinnerInteraction = false; // To track if the spinner interacted with
-    private int lastUnitSpinnerPosition = 0; // Store last spinner position for radius units
+    private int lastUnitSpinnerPosition = 0; // Store last spinner position for chosen units
     private int lastVolumeSpinnerPosition = 0; // Store last spinner position for volume units
 
     @Override
@@ -96,29 +96,7 @@ public class SphereActivity extends AppCompatActivity {
             });
 
             // Add listeners for live updates
-            radius.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    // No-op
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if (!isSpinnerInteraction) {
-                        String newText = s.toString().trim();
-                        // Calculate if the input value changes only
-                        if (!newText.equals(lastRadiusInput)) {
-                            lastRadiusInput = newText;
-                            calculateVolume();
-                        }
-                    }
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    // No-op
-                }
-            });
+            updateLive(radius, lastRadiusInput, isSpinnerInteraction);
 
             // Set initial values to avoid resetting spinners
             unitSpinner.setSelection(lastUnitSpinnerPosition, false); // Avoid triggering recalculation
@@ -208,6 +186,31 @@ public class SphereActivity extends AppCompatActivity {
         BigDecimal volume = fourThirds.multiply(pi).multiply(rCubed);
 
         return volume.setScale(20, RoundingMode.HALF_UP);
+    }
+
+    private void updateLive(TextView type, String inputType, boolean spinnerInteraction) {
+        type.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No-op
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!spinnerInteraction) {
+                    String newText = s.toString().trim();
+                    // Calculate if the input value changes only
+                    if (!newText.equals(inputType)) {
+                        calculateVolume();
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // No-op
+            }
+        });
     }
 
     private static void enterValidNumberToast(Context context) {
