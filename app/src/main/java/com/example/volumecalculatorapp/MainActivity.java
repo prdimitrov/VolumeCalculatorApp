@@ -11,6 +11,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.volumecalculatorapp.activity.CubeActivity;
+import com.example.volumecalculatorapp.activity.CylinderActivity;
+import com.example.volumecalculatorapp.activity.SphereActivity;
 import com.example.volumecalculatorapp.adapter.CustomAdapter;
 import com.example.volumecalculatorapp.model.Shape;
 
@@ -65,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                         intent = new Intent(getApplicationContext(), CylinderActivity.class);
                         break;
                     case 2:
-//                        intent = new Intent(getApplicationContext(), CubeActivity.class);
+                        intent = new Intent(getApplicationContext(), CubeActivity.class);
                         break;
                     case 3:
 //                        intent = new Intent(getApplicationContext(), PrismActivity.class);

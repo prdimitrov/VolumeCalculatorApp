@@ -1,4 +1,4 @@
-package com.example.volumecalculatorapp;
+package com.example.volumecalculatorapp.activity;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -20,25 +20,26 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.volumecalculatorapp.MainActivity;
+import com.example.volumecalculatorapp.R;
 import com.example.volumecalculatorapp.enums.Unit;
 import com.example.volumecalculatorapp.enums.VolumeUnit;
+import com.example.volumecalculatorapp.listener.SimpleSpinnerListener;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Arrays;
 
-public class CylinderActivity extends AppCompatActivity {
+public class SphereActivity extends AppCompatActivity {
 
-    EditText radius, height;
+    EditText radius;
     TextView title, result;
     Spinner unitSpinner, volumeUnitSpinner;
     Button clearButton, backButton, copyButton;
     ClipboardManager clipboardManager;
-
     private String lastRadiusInput = ""; // The last entered radius
-    private String lastHeightInput = ""; // The last entered height
-    private boolean isSpinnerInteraction = false; // To track spinner interactions
+    private boolean isSpinnerInteraction = false; // To track if the spinner interacted with
     private int lastUnitSpinnerPosition = 0; // Store last spinner position for radius units
     private int lastVolumeSpinnerPosition = 0; // Store last spinner position for volume units
 
@@ -46,44 +47,41 @@ public class CylinderActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_cylinder);
+        setContentView(R.layout.activity_sphere);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
 
-            radius = findViewById(R.id.cylinderEnterRadiusEditText);
-            height = findViewById(R.id.cylinderEnterHeightEditText);
-            title = findViewById(R.id.cylinderTitleTextView);
-            result = findViewById(R.id.cylinderResultTextView);
+            radius = findViewById(R.id.sphereEnterRadiusEditText);
+            title = findViewById(R.id.sphereTitleTextView);
+            result = findViewById(R.id.sphereResultTextView);
 
-            clearButton = findViewById(R.id.cylinderClearButton);
-            backButton = findViewById(R.id.cylinderBackButton);
-            copyButton = findViewById(R.id.cylinderCopyButton);
+            clearButton = findViewById(R.id.sphereClearButton);
+            backButton = findViewById(R.id.sphereBackButton);
+            copyButton = findViewById(R.id.sphereCopyButton);
 
-            unitSpinner = findViewById(R.id.cylinderRadiusUnitSpinner);
-            volumeUnitSpinner = findViewById(R.id.cylinderVolumeUnitSpinner);
+            unitSpinner = findViewById(R.id.sphereRadiusUnitSpinner);
+            volumeUnitSpinner = findViewById(R.id.sphereVolumeUnitSpinner);
 
             unitSpinner.setAdapter(spinnerRadiusValues(getApplicationContext()));
             volumeUnitSpinner.setAdapter(spinnerVolumeValues(getApplicationContext()));
 
-            title.setText(getString(R.string.cylinder_volume_title)); // Correct title for Cylinder
+            title.setText(getString(R.string.sphere_volume_title));
 
             clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 
             clearButton.setOnClickListener(v1 -> {
                 result.setText(R.string.zero);
                 radius.setText("");
-                height.setText("");
                 lastRadiusInput = "";
-                lastHeightInput = "";
                 Toast.makeText(getApplicationContext(), "Fields cleared!", Toast.LENGTH_SHORT).show();
             });
 
             copyButton.setOnClickListener(v3 -> {
-                String textToCopy = result.getText().toString(); // Get the text from the result TextView
+                String textToCopy = result.getText().toString();  // Get the text from the result TextView
                 if (!textToCopy.isEmpty()) {
-                    ClipData clip = ClipData.newPlainText("Cylinder Volume Result", textToCopy);
+                    ClipData clip = ClipData.newPlainText("Sphere Volume Result", textToCopy);
                     clipboardManager.setPrimaryClip(clip);
                     Toast.makeText(getApplicationContext(), "Copied to clipboard!", Toast.LENGTH_SHORT).show();
                 } else {
@@ -91,12 +89,13 @@ public class CylinderActivity extends AppCompatActivity {
                 }
             });
 
+
             backButton.setOnClickListener(v2 -> {
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(i);
             });
 
-            // Add listeners for live updates on both radius and height
+            // Add listeners for live updates
             radius.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -105,31 +104,13 @@ public class CylinderActivity extends AppCompatActivity {
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    String newText = s.toString().trim();
-                    if (!newText.equals(lastRadiusInput)) {
-                        lastRadiusInput = newText;
-                        calculateVolume();
-                    }
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    // No-op
-                }
-            });
-
-            height.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    // No-op
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    String newText = s.toString().trim();
-                    if (!newText.equals(lastHeightInput)) {
-                        lastHeightInput = newText;
-                        calculateVolume();
+                    if (!isSpinnerInteraction) {
+                        String newText = s.toString().trim();
+                        // Calculate if the input value changes only
+                        if (!newText.equals(lastRadiusInput)) {
+                            lastRadiusInput = newText;
+                            calculateVolume();
+                        }
                     }
                 }
 
@@ -169,10 +150,8 @@ public class CylinderActivity extends AppCompatActivity {
     private void calculateVolume() {
         try {
             String radiusInput = radius.getText().toString();
-            String heightInput = height.getText().toString();
-
-            if (!radiusInput.isEmpty() && !heightInput.isEmpty()) {
-                BigDecimal volume = calculateCylinderVolume(radiusInput, heightInput);
+            if (!radiusInput.isEmpty()) {
+                BigDecimal volume = calculateSphereVolume(radiusInput);
 
                 String selectedRadiusUnit = (String) unitSpinner.getSelectedItem();
                 String selectedVolumeUnit = (String) volumeUnitSpinner.getSelectedItem();
@@ -202,6 +181,9 @@ public class CylinderActivity extends AppCompatActivity {
                 } else if (selectedVolumeUnit.equals(VolumeUnit.CUYD.getAbbreviation())) {
                     volume = volume.multiply(new BigDecimal("1.30795")); // m³ to cubic yards
                     result.setText("V = " + volume.toPlainString() + " " + VolumeUnit.CUYD.getAbbreviation());
+                } else if (selectedVolumeUnit.equals(VolumeUnit.L.getAbbreviation())) {
+                    volume = volume.multiply(new BigDecimal("1000")); // m³ to liters
+                    result.setText("V = " + volume.toPlainString() + " " + VolumeUnit.L.getAbbreviation());
                 } else {
                     result.setText("V = " + volume.toPlainString() + " " + VolumeUnit.M3.getAbbreviation()); // m³
                 }
@@ -213,17 +195,17 @@ public class CylinderActivity extends AppCompatActivity {
         }
     }
 
-    private static BigDecimal calculateCylinderVolume(String radiusInput, String heightInput) {
-        // Parse the radius and height as BigDecimal
+    private static BigDecimal calculateSphereVolume(String radiusInput) {
         BigDecimal r = new BigDecimal(radiusInput);
-        BigDecimal h = new BigDecimal(heightInput);
 
         BigDecimal pi = new BigDecimal(Math.PI, MathContext.DECIMAL128);
 
-        BigDecimal rSquared = r.multiply(r);
+        BigDecimal fourThirds = new BigDecimal("4").divide(new BigDecimal("3"), MathContext.DECIMAL128);
 
-        // Formula: V = π x r² x h
-        BigDecimal volume = pi.multiply(rSquared).multiply(h);
+        BigDecimal rCubed = r.multiply(r).multiply(r);
+
+        // Formula: V = (4/3) * π * r³
+        BigDecimal volume = fourThirds.multiply(pi).multiply(rCubed);
 
         return volume.setScale(20, RoundingMode.HALF_UP);
     }
@@ -233,8 +215,8 @@ public class CylinderActivity extends AppCompatActivity {
     }
 
     private static ArrayAdapter<String> spinnerRadiusValues(Context context) {
-        String[] radiusUnits = Arrays.stream(Unit.values()).map(Unit::getAbbreviation).toArray(String[]::new);
-        return new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, radiusUnits);
+        String[] units = Arrays.stream(Unit.values()).map(Unit::getAbbreviation).toArray(String[]::new);
+        return new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, units);
     }
 
     private static ArrayAdapter<String> spinnerVolumeValues(Context context) {

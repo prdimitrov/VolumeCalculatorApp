@@ -6,7 +6,8 @@ public enum VolumeUnit {
     M3("m³"),
     CUIN("cu in"),
     CUFT("cu ft"),
-    CUYD("cu yd");
+    CUYD("cu yd"),
+    L("liters");
     private final String abbreviation;
 
     VolumeUnit(String abbreviation) {
