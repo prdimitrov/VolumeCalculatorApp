@@ -13,10 +13,13 @@
         android:theme="@style/Theme.VolumeCalculatorApp"
         tools:targetApi="31">
         <activity
-            android:name=".CylinderActivity"
+            android:name=".activity.CubeActivity"
             android:exported="false" />
         <activity
-            android:name=".SphereActivity"
+            android:name=".activity.CylinderActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.SphereActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

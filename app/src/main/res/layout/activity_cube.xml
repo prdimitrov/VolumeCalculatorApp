@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:background="@drawable/back2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.CylinderActivity">
+    android:background="@drawable/back2"
+    tools:context=".activity.CubeActivity">
 
     <TextView
-        android:id="@+id/cylinderTitleTextView"
+        android:id="@+id/cubeTitleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="39dp"
@@ -22,37 +22,21 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/cylinderEnterRadiusEditText"
+        android:inputType="numberDecimal"
+        android:id="@+id/cubeEnterSideLengthEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:hint="@string/enter_radius"
-        android:inputType="numberDecimal"
+        android:layout_marginTop="164dp"
+        android:hint="@string/enter_side_length"
         android:textColor="#ffffff"
         android:textColorHint="#ffffff"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cylinderEnterHeightEditText" />
-
-    <EditText
-        android:id="@+id/cylinderEnterHeightEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="132dp"
-        android:hint="@string/enter_height"
-        android:inputType="numberDecimal"
-        android:textColor="#ffffff"
-        android:textColorHint="#ffffff"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/cylinderResultTextView"
+        android:id="@+id/cubeResultTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
@@ -63,10 +47,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cylinderEnterRadiusEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/cubeEnterSideLengthEditText" />
 
     <Button
-        android:id="@+id/cylinderBackButton"
+        android:id="@+id/cubeBackButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -76,7 +60,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/cylinderClearButton"
+        android:id="@+id/cubeClearButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
@@ -86,17 +70,17 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
-        android:id="@+id/cylinderCopyButton"
+        android:id="@+id/cubeCopyButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="36dp"
         android:text="@string/copy"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/cylinderClearButton"
-        app:layout_constraintStart_toEndOf="@+id/cylinderBackButton" />
+        app:layout_constraintEnd_toStartOf="@+id/cubeClearButton"
+        app:layout_constraintStart_toEndOf="@+id/cubeBackButton" />
 
     <Spinner
-        android:id="@+id/cylinderRadiusUnitSpinner"
+        android:id="@+id/cubeLengthUnitSpinner"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
@@ -105,10 +89,10 @@
         android:minHeight="48dp"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cylinderEnterRadiusEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/cubeEnterSideLengthEditText" />
 
     <Spinner
-        android:id="@+id/cylinderVolumeUnitSpinner"
+        android:id="@+id/cubeVolumeUnitSpinner"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
@@ -117,7 +101,7 @@
         android:minHeight="48dp"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cylinderResultTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/cubeResultTextView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
